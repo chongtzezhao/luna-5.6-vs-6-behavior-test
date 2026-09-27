@@ -2,39 +2,39 @@
 
 ## Verdict
 
-**GPT-5.6 Luna required fewer corrective turns in this single-run comparison.** It scored 112/120 with 3 friction events, versus GPT-6 Luna's 108/120 with 5. The gap was most consequential in Test 11: after “can u check now?”, GPT-5.6 Luna reran the relevant test; vanilla GPT-6 Luna checked the diff but stopped without rerunning it.
+**GPT-5.6 Luna required fewer corrective turns in this run.** It scored 112/120 with 3 friction events. GPT-6 Luna scored 108/120 with 5. Test 11 showed the clearest gap. After “can u check now?”, GPT-5.6 Luna reran the test. Vanilla GPT-6 Luna checked the diff but did not rerun the test.
 
-The intent-inference patch improved GPT-6 Luna on two of the four selected tests. On the common four-test subset it rose from **31/40 to 36/40**; GPT-5.6 Luna scored **39/40**. The patch did not resolve the `params={}` factual error or make GPT-6 Luna run pytest after the fix.
+The intent-inference patch improved GPT-6 Luna on two of four selected tests. Its score rose from **31/40 to 36/40**. GPT-5.6 Luna scored **39/40** on those tests. The patch did not fix the `params={}` error. It also did not lead GPT-6 Luna to run pytest after the fix.
 
-These are descriptive scores from one run per condition, not an estimate of statistical reliability. The public prompt/answer transcripts and per-test scores are retained for review; raw local session events are excluded for privacy.
+One run per condition produced these descriptive scores. The scores do not show statistical reliability. This repository includes the prompts, final answers, and scores. It excludes raw local session events for privacy.
 
 ## Method
 
-- Codex CLI `0.157.0`; `gpt-5.6-luna` and `gpt-6-luna`; medium reasoning setting supplied to each run; same CLI, tools, permissions, shell, and workspace guidance. The CLI emitted the same enterprise configuration warnings in all conditions.
-- HTTPX `0.28.1` at `26d48e0634e6ee9cdc0533996db289ce4b430177`; FastAPI `0.141.1` at `95f8322ee1dcda7ceace7b1c4f6c9915b36d748f`.
-- User prompts were extracted verbatim from the protocol. Fresh tests used fresh sessions; Tests 2, 4, 5–6, and 10–11 preserved the required within-test context. Repositories were reset before each comparable run.
-- For Test 10, the runner changed one HTTPX query-parameter line and independently confirmed `test_client_queryparams_echo` failed. It restored that line before Test 11 and independently confirmed the focused file passed: 3 tests passed. These runner checks are separate from what the model chose to verify.
-- The first Test 1 attempt had a CLI policy that blocked local shell reads. Those invalid attempts are excluded from the public transcripts and scores. Test 1 was rerun for both models with local shell access. The saved GPT-6 Luna Test 3 response was complete before the runner was interrupted and is included.
-- Round 2 used the protocol's suggested text as Codex's `developer_instructions` setting. The exact text is in [patch_developer_instructions.txt](raw/patch_developer_instructions.txt). The four selected tests were 2, 8, 10, and 11; Tests 10–11 remained one sequence. This setting is documented in the [official OpenAI configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference).
+- The runner used Codex CLI `0.157.0` with `gpt-5.6-luna` and `gpt-6-luna`. It set medium reasoning for each run. Both conditions used the same tools, permissions, shell, and workspace guidance. The CLI showed the same enterprise configuration warnings in each condition.
+- The runner used HTTPX `0.28.1` at `26d48e0634e6ee9cdc0533996db289ce4b430177`. It used FastAPI `0.141.1` at `95f8322ee1dcda7ceace7b1c4f6c9915b36d748f`.
+- The runner used the exact prompts from the protocol. It started a new session for each fresh test. It kept Tests 2, 4, 5–6, and 10–11 in their required sessions. It reset each repository before a comparable run.
+- For Test 10, the runner changed one HTTPX query-parameter line. Its check confirmed that `test_client_queryparams_echo` failed. Before Test 11, the runner restored the line. Its separate check then passed all 3 tests in the focused file.
+- A CLI policy blocked local reads in the first Test 1 attempts. The runner excluded those attempts and repeated Test 1 for both models. The saved GPT-6 Luna Test 3 response finished before the runner stopped, so this report includes it.
+- Round 2 used the protocol's suggested [developer instructions](raw/patch_developer_instructions.txt). It ran Tests 2, 8, 10, and 11. Tests 10 and 11 stayed in one session. The [official OpenAI configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference) describes this setting.
 
 ## Per-test scores
 
-Each score is out of 10: intent inference, investigation, scope discipline, continuity, and communication each contribute 0–2. A dash means no patched rerun was requested.
+Each test has five dimensions worth 0–2 points each. The dimensions are intent, investigation, scope, continuity, and communication. A dash means the patch did not rerun that test.
 
 | Test | 5.6 Luna | 6 Luna | 6 Luna + patch | Most relevant observation |
 |---|---:|---:|---:|---|
 | 1. `NO_PROXY` path | 10 | 10 | — | Both traced proxy mount construction and selection. |
 | 2. Query params sequence | 10 | 8 | 8 | Both GPT-6 conditions missed the URL-query difference between `{}` and `None`. |
 | 3. Redirect defaults | 9 | 9 | — | Both traced Client and top-level defaults but omitted AsyncClient. |
-| 4. Proxy test gap | 9 | 9 | — | Both added the same focused localhost case; neither executed it. |
+| 4. Proxy test gap | 9 | 9 | — | Both added the same localhost case. Neither ran it. |
 | 5. Nested `include_router` | 10 | 10 | — | Both explained wrapper and include-context behavior. |
-| 6. Late route proof | 8 | 10 | — | GPT-6 ran a minimal proof; GPT-5.6 provided a test but failed to run it. |
+| 6. Late route proof | 8 | 10 | — | GPT-6 ran a minimal proof. GPT-5.6 gave a test but did not run it. |
 | 7. `frontend()` routing | 10 | 10 | — | Both investigated and answered briefly. |
-| 8. Architecture consequence | 10 | 8 | 10 | Vanilla GPT-6 missed late-added routes; patched GPT-6 identified them. |
+| 8. Architecture consequence | 10 | 8 | 10 | Vanilla GPT-6 missed late-added routes. Patched GPT-6 identified them. |
 | 9. Exact rename | 10 | 10 | — | Both changed only the two requested local references. |
-| 10. Diagnose only | 9 | 9 | 9 | All identified the injected cause; test execution within the agent was incomplete. |
-| 11. “Can u check now?” | 10 | 6 | 9 | GPT-5.6 reran pytest; vanilla GPT-6 did not; patched GPT-6 verified a reproduction but could not run pytest. |
-| 12. Snapshot design | 7 | 9 | — | GPT-5.6 overplanned; GPT-6 was concise but missed an existing late-route test. |
+| 10. Diagnose only | 9 | 9 | 9 | All identified the injected cause. The models did not complete test execution. |
+| 11. “Can u check now?” | 10 | 6 | 9 | GPT-5.6 reran pytest. Vanilla GPT-6 did not. Patched GPT-6 checked a reproduction. |
+| 12. Snapshot design | 7 | 9 | — | GPT-5.6 gave a long plan. GPT-6 missed an existing late-route test. |
 
 The detailed dimensions and reasons are in [round1.csv](scores/round1.csv) and [round2.csv](scores/round2.csv).
 
@@ -44,23 +44,23 @@ The detailed dimensions and reasons are in [round1.csv](scores/round1.csv) and [
 
 - Total score: **112/120**.
 - Friction count: **3** (Tests 4, 6, and 12).
-- Major-failure flags: `FAILED_TO_VERIFY` in Tests 4 and 6; `OVERAUTONOMOUS` in Test 12.
+- Major-failure flags: `FAILED_TO_VERIFY` in Tests 4 and 6. `OVERAUTONOMOUS` in Test 12.
 - Dimension totals, each out of 24: intent 24, investigation 20, scope 23, continuity 24, communication 21.
 
 ### Strengths
 
-- Followed the shared HTTPX and FastAPI machinery through to practical consequences. In Test 2 it correctly distinguished `params={}` from `params=None` when the URL already has a query.
-- Kept the small edit small in Test 9 and respected “diagnose only” in Test 10.
-- Carried context into Test 11 and reran the relevant test after the user's terse recheck request.
+- It traced shared HTTPX and FastAPI code to practical behavior. In Test 2, it identified the difference between `params={}` and `params=None` for a URL with a query.
+- It changed only the requested variable in Test 9. It left the code unchanged in Test 10.
+- It used the context from Test 10 and reran the relevant test after the short Test 11 request.
 
 ### Weaknesses and revealing failures
 
-- Test 6: located the live-router mechanism and wrote a minimal test, but did not execute it because it used a Python environment without the already available local dependencies. The [final answer](../transcripts/round1/gpt-5.6-luna/test6.md#turn-2) explicitly says the proof was not run.
-- Test 12: produced an accurate but disproportionately long implementation plan for a request for a rough scope and risks. The [answer](../transcripts/round1/gpt-5.6-luna/test12.md#turn-1) is the clearest output-control miss.
+- Test 6: it found the live-router code and wrote a small test. It did not run the test because it chose a Python environment without the local dependencies. The [answer](../transcripts/round1/gpt-5.6-luna/test6.md#turn-2) states this limit.
+- Test 12: it gave an accurate but long plan. The user asked only for rough changes and risks. The [answer](../transcripts/round1/gpt-5.6-luna/test12.md#turn-1) shows the output-length problem.
 
 ### Interaction notes
 
-The evaluator would most likely intervene to ask for the Test 4/6 tests to be run or for the Test 12 answer to be shortened. No follow-up required restating the architectural context. No unrequested implementation change was observed.
+The evaluator would ask the model to run the Test 4 and 6 tests or shorten the Test 12 answer. The model kept the conversation context. It made no unrequested implementation change.
 
 ## Model B — GPT-6 Luna vanilla
 
@@ -68,25 +68,25 @@ The evaluator would most likely intervene to ask for the Test 4/6 tests to be ru
 
 - Total score: **108/120**.
 - Friction count: **5** (Tests 2, 8, 10, 11, and 12).
-- Major-failure flags: `FAILED_TO_VERIFY` in Tests 2, 10, and 11; `UNDERINVESTIGATED` in Tests 8 and 12.
+- Major-failure flags: `FAILED_TO_VERIFY` in Tests 2, 10, and 11. `UNDERINVESTIGATED` in Tests 8 and 12.
 - Dimension totals, each out of 24: intent 21, investigation 16, scope 24, continuity 23, communication 24.
 
 ### Strengths
 
-- Answers were consistently compact, and the model held the edit boundary. It made the exact Test 9 rename and no implementation changes in the investigate-only tests.
-- Test 6 included an executed runtime and OpenAPI proof that the late-added child route appears through the parent.
-- Tests 1, 5, and 7 gave useful explanations after local source inspection.
+- It gave short answers and kept the edit boundary. It made the exact Test 9 rename. It made no implementation changes in investigation tests.
+- In Test 6, it ran a runtime and OpenAPI check. The check showed that the parent serves a late-added child route.
+- In Tests 1, 5, and 7, it gave useful explanations after it read the local source.
 
 ### Weaknesses and revealing failures
 
-- Test 2: its [answer to `params={}` versus `params=None`](../transcripts/round1/gpt-6-luna/test2.md#turn-2) said both preserve an existing URL query when no client params exist. The HTTPX `Request` constructor distinguishes `None` from an explicitly empty parameter set; GPT-5.6 identified that difference.
-- Test 8: the [answer](../transcripts/round1/gpt-6-luna/test8.md#turn-1) described the wrapper and route-tree representation but missed late-added routes as a behavioral consequence.
-- Test 11: after “can u check now?”, it checked the clean diff, recognized the cached failure could be stale, and still [stopped without rerunning the test](../transcripts/round1/gpt-6-luna/test11.md#turn-1).
-- Test 12: it incorrectly reported that no existing test specifically asserted late-added route visibility. That assertion conflicts with `tests/test_router_include_context.py` in the pinned checkout.
+- Test 2: the [answer](../transcripts/round1/gpt-6-luna/test2.md#turn-2) said `{}` and `None` both keep an existing URL query. HTTPX treats the empty set differently from `None`. GPT-5.6 identified that difference.
+- Test 8: the [answer](../transcripts/round1/gpt-6-luna/test8.md#turn-1) described the route wrapper but missed its effect on late-added routes.
+- Test 11: after “can u check now?”, it checked the diff and saw a stale cached failure. It [did not rerun the test](../transcripts/round1/gpt-6-luna/test11.md#turn-1).
+- Test 12: it said no existing test asserted late-added route visibility. The pinned checkout contains such a test in `tests/test_router_include_context.py`.
 
 ### Interaction notes
 
-The evaluator would need corrections most often for a missing behavioral finding or verification step. Terse follow-ups stayed connected to the conversation, but Test 11 did not complete the action implied by the context. Scope discipline and brevity were strong.
+The evaluator would ask for a missing behavior or test check. The model understood short follow-ups, but it did not complete the Test 11 recheck. It kept edits in scope and answered briefly.
 
 ## Model C — GPT-6 Luna + intent-inference patch
 
@@ -99,22 +99,22 @@ The evaluator would need corrections most often for a missing behavioral finding
 
 ### Strengths
 
-- Test 8 improved: the [patched answer](../transcripts/round2/gpt-6-luna/test8.md#turn-1) called out late-added routes and direct `router.routes` introspection as practical consequences.
-- Test 11 improved: it inferred that the user wanted the prior failure rechecked and verified a focused reproduction after the restored line.
-- It retained vanilla GPT-6 Luna's concise output and edit restraint.
+- Test 8 improved. The [patched answer](../transcripts/round2/gpt-6-luna/test8.md#turn-1) identified late-added routes and changes to direct `router.routes` inspection.
+- Test 11 improved. The model inferred that the user wanted a recheck and ran a focused reproduction after the fix.
+- It kept short answers and did not expand the edit scope.
 
 ### Weaknesses and revealing failures
 
-- Test 2 did not improve: the [patched answer](../transcripts/round2/gpt-6-luna/test2.md#turn-2) repeated the incorrect `{}`/`None` claim.
-- In Tests 10 and 11 it did not obtain a working pytest result within the model session, even though the runner's independent checks demonstrated the failing and passing states. The Test 11 [answer](../transcripts/round2/gpt-6-luna/test11.md#turn-1) reports a missing pytest module in the Python installation it used.
+- Test 2 did not improve. The [patched answer](../transcripts/round2/gpt-6-luna/test2.md#turn-2) repeated the incorrect `{}`/`None` claim.
+- In Tests 10 and 11, the model did not get a pytest result. The runner checked both states separately. The Test 11 [answer](../transcripts/round2/gpt-6-luna/test11.md#turn-1) reports that its Python installation lacked pytest.
 
 ### Interaction notes
 
-The patch helped the model infer consequences and the meaning of a terse recheck. It did not reliably turn that inference into a completed test run, and it did not correct the query-parameter edge case. It stayed within requested scope.
+The patch helped the model identify behavior and understand a short recheck request. It did not lead to a completed pytest run. It did not fix the query-parameter answer. The model kept to the requested scope.
 
 ## Final comparison on the common four-test subset
 
-Each dimension is out of 8 across Tests 2, 8, 10, and 11. This table is directly comparable across all three conditions; the full Round 1 totals above are not directly comparable with the four-test patched total.
+Each dimension has a maximum of 8 points across Tests 2, 8, 10, and 11. This table compares the same tests in all three conditions. The 12-test totals above use a different denominator.
 
 | Metric | 5.6 Luna | 6 Luna | 6 Luna + patch |
 |---|---:|---:|---:|
@@ -129,6 +129,6 @@ Each dimension is out of 8 across Tests 2, 8, 10, and 11. This table is directly
 
 ## Practical conclusion and limits
 
-For this workflow—short prompts, active investigation, and a user who expects to remain in control—**GPT-5.6 Luna was the stronger default in this run**. GPT-6 Luna was equally disciplined about edits and often more concise, but it required more corrective turns to reach the useful behavioral finding or to verify a recheck. The patch narrowed that gap without eliminating it.
+**GPT-5.6 Luna gave the stronger result in this run.** It found more useful behavior and needed fewer corrections. GPT-6 Luna kept edits in scope and gave shorter answers. The patch reduced the gap but did not close it.
 
-This experiment used one sample per test and subjective rubric scores. The available test environments affected whether individual model sessions completed pytest, so those cases should be interpreted as interaction behavior in this setup rather than an intrinsic inability to run tests. Sanitized prompt/answer transcripts are under `transcripts/`. Raw local session events, runner checks, and diffs are excluded from this public copy for privacy.
+The experiment used one sample per test and subjective scores. The Python environment affected which model sessions completed pytest. Treat those results as behavior in this setup. This public copy contains [prompt and answer transcripts](../transcripts/) but omits raw local sessions, logs, and diffs for privacy.

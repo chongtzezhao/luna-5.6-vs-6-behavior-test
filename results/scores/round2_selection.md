@@ -1,10 +1,10 @@
 # Patched rerun selection
 
-Round 1 scoring is in `round1.csv`. The four GPT-6 Luna tests selected for the intent-inference patch are **2, 8, 10, and 11**.
+See `round1.csv` for the Round 1 scores. The runner selected GPT-6 Luna Tests **2, 8, 10, and 11** for the patch.
 
-- Test 2: missed the practical difference between `params={}` and `params=None` for a URL that already has a query.
-- Test 8: described the wrapper but missed the consequential live-route behavior.
-- Test 10: diagnosed from a cached failure without executing the focused test.
-- Test 11: did not rerun the relevant test after the terse follow-up.
+- Test 2: It missed the difference between `params={}` and `params=None` for a URL with a query.
+- Test 8: It described the wrapper but missed the live-route behavior.
+- Test 10: It used a cached failure and did not run the focused test.
+- Test 11: It did not rerun the test after the short follow-up.
 
-Tests 10 and 11 must run as one sequence. Test 2's three prompts must also stay in one session. The patched round will therefore run three fresh sessions covering four scored tests.
+Tests 10 and 11 share one session. Test 2 keeps its three prompts in one session. Round 2 uses three sessions for four scored tests.
