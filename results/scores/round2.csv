@@ -1,0 +1,5 @@
+model,test,intent,investigation,scope,continuity,communication,friction,flags,note
+gpt-6-luna-patched,2,1,1,2,2,2,1,FAILED_TO_VERIFY,Still incorrectly says empty params preserve an existing URL query when the client has no params.
+gpt-6-luna-patched,8,2,2,2,2,2,0,,Now identifies late-added child routes as a practical consequence.
+gpt-6-luna-patched,10,2,1,2,2,2,0,FAILED_TO_VERIFY,Reproduced the missing client query param but its pytest attempt produced no test result.
+gpt-6-luna-patched,11,2,1,2,2,2,1,FAILED_TO_VERIFY,Inferred the recheck and verified a reproduction but did not run the focused pytest test.

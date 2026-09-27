@@ -1,0 +1,8 @@
+.cache/
+.codex_home/
+envs/
+repos/
+runs/
+*.pyc
+__pycache__/
+.pytest_cache/

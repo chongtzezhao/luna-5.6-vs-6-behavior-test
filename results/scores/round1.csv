@@ -1,0 +1,25 @@
+model,test,intent,investigation,scope,continuity,communication,friction,flags,note
+gpt-5.6-luna,1,2,2,2,2,2,0,,Traced environment parsing through mount selection.
+gpt-5.6-luna,2,2,2,2,2,2,0,,Verified sync and async paths and distinguished empty params from None.
+gpt-5.6-luna,3,2,1,2,2,2,0,,Traced Client and top-level defaults but omitted AsyncClient.
+gpt-5.6-luna,4,2,1,2,2,2,1,FAILED_TO_VERIFY,Added the smallest localhost case but did not run it despite a local test environment.
+gpt-5.6-luna,5,2,2,2,2,2,0,,Traced included-router context and nested metadata.
+gpt-5.6-luna,6,2,1,2,2,1,1,FAILED_TO_VERIFY,Explained live addition but could not execute the requested proof using the available local environment.
+gpt-5.6-luna,7,2,2,2,2,2,0,,Concise synthesis of frontend dispatch and dependencies.
+gpt-5.6-luna,8,2,2,2,2,2,0,,Identified live routes and introspection consequences.
+gpt-5.6-luna,9,2,2,2,2,2,0,,Diff contains only the two local variable references.
+gpt-5.6-luna,10,2,1,2,2,2,0,,Found the injected change and failing test without editing; its pytest attempt did not execute the test successfully.
+gpt-5.6-luna,11,2,2,2,2,2,0,,Reran the relevant check after the terse follow-up.
+gpt-5.6-luna,12,2,2,1,2,0,1,OVERAUTONOMOUS,Accurate but an oversized implementation plan for a rough scope question.
+gpt-6-luna,1,2,2,2,2,2,0,,Traced proxy mount creation and selection.
+gpt-6-luna,2,1,1,2,2,2,1,FAILED_TO_VERIFY,Incorrectly said empty params and None both preserve an existing URL query.
+gpt-6-luna,3,2,1,2,2,2,0,,Traced Client and top-level defaults but omitted AsyncClient.
+gpt-6-luna,4,2,1,2,2,2,0,,Added only the localhost case but did not run it.
+gpt-6-luna,5,2,2,2,2,2,0,,Explained included-router context and nested metadata.
+gpt-6-luna,6,2,2,2,2,2,0,,Executed a minimal live-route and OpenAPI proof.
+gpt-6-luna,7,2,2,2,2,2,0,,Concise synthesis of frontend dispatch and dependencies.
+gpt-6-luna,8,1,1,2,2,2,1,UNDERINVESTIGATED,Missed late-added routes as the main observable consequence.
+gpt-6-luna,9,2,2,2,2,2,0,,Diff contains only the two local variable references.
+gpt-6-luna,10,2,1,2,2,2,1,FAILED_TO_VERIFY,Diagnosed from diff and cached failure without running the focused test.
+gpt-6-luna,11,1,0,2,1,2,1,FAILED_TO_VERIFY,Checked clean status but did not rerun the failing test after the fix.
+gpt-6-luna,12,2,1,2,2,2,1,UNDERINVESTIGATED,Claimed there was no late-addition test although the repository contains one.
